@@ -391,7 +391,7 @@ class StsbProcessor(GLUEProcessor):
 
     return examples
 
-class ColaProcessor(DataProcessor):
+class ColaProcessor(GLUEProcessor):
   def __init__(self):
     super(ColaProcessor, self).__init__()
     self.label_column = 1
