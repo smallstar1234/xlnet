@@ -140,6 +140,7 @@ flags.DEFINE_bool("is_regression", default=False,
 
 FLAGS = flags.FLAGS
 
+csv.field_size_limit(sys.maxsize)
 
 class InputExample(object):
   """A single training/test example for simple sequence classification."""
