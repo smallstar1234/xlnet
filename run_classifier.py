@@ -161,7 +161,8 @@ class InputExample(object):
     self.label = label
 
 
-class DataProcessor(object):
+class 
+(object):
   """Base class for data converters for sequence classification data sets."""
 
   def get_train_examples(self, data_dir):
@@ -391,6 +392,45 @@ class StsbProcessor(GLUEProcessor):
 
     return examples
 
+class ColaProcessor(DataProcessor):
+  def __init__(self):
+    super(ColaProcessor, self).__init__()
+    self.label_column = 1
+    self.text_a_column = 3
+    self.test_text_a_column = 1
+
+  def get_labels(self):
+    return ["0", "1","2"]
+
+  def _create_examples(self, lines, set_type):
+    """Creates examples for the training and dev sets."""
+    examples = []
+    for (i, line) in enumerate(lines):
+      if i == 0 and self.contains_header and set_type != "test":
+        continue
+      if i == 0 and self.test_contains_header and set_type == "test":
+        continue
+      guid = "%s-%s" % (set_type, i)
+
+      a_column = (self.text_a_column if set_type != "test" else
+          self.test_text_a_column)
+
+      # there are some incomplete lines in QNLI
+      if len(line) <= a_column:
+        tf.logging.warning('Incomplete line, ignored.')
+        continue
+      text_a = line[a_column]
+
+      if set_type == "test":
+        label = self.get_labels()[0]
+      else:
+        if len(line) <= self.label_column:
+          tf.logging.warning('Incomplete line, ignored.')
+          continue
+        label = line[self.label_column]
+      examples.append(
+          InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
+    return examples
 
 def file_based_convert_examples_to_features(
     examples, label_list, max_seq_length, tokenize_fn, output_file,
@@ -650,7 +690,8 @@ def main(_):
       "mnli_mismatched": MnliMismatchedProcessor,
       'sts-b': StsbProcessor,
       'imdb': ImdbProcessor,
-      "yelp5": Yelp5Processor
+      "yelp5": Yelp5Processor,
+      "cola": ColaProcessor
   }
 
   if not FLAGS.do_train and not FLAGS.do_eval and not FLAGS.do_predict:
