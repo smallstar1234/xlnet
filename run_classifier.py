@@ -161,8 +161,7 @@ class InputExample(object):
     self.label = label
 
 
-class 
-(object):
+class DataProcessor(object):
   """Base class for data converters for sequence classification data sets."""
 
   def get_train_examples(self, data_dir):
